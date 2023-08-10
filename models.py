@@ -19,16 +19,14 @@ class Student(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(50))
     group_id = Column(Integer, ForeignKey("groups.id"))
-    group = relationship("Group", back_populates="students")
+    group = relationship("Group", back_populates="student")
 
 
 class Teacher(Base):
     __tablename__ = "techers"
     id = Column(Integer, primary_key=True)
     name = Column(String(50))
-    subject = relationship(
-        "Subject", back_populates="teachers"
-    )
+    subjects = relationship("Subject", back_populates="teacher")
 
 
 class Subject(Base):
@@ -36,9 +34,7 @@ class Subject(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(50))
     teacher_id = Column(Integer, ForeignKey("teachers.id"))
-    subject = relationship(
-        "Teacher", back_populates="teachers"
-    )
+    teacher = relationship("Teacher", back_populates="subjects")
 
 
 class Point(Base):
