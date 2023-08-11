@@ -11,21 +11,18 @@ class Group(Base):
     name = Column(String(10))
     students = relationship("Student", back_populates="group")
 
-
 class Student(Base):
     __tablename__ = "students"
     id = Column(Integer, primary_key=True)
     name = Column(String(50))
     group_id = Column(Integer, ForeignKey("groups.id"))
-    group = relationship("Group", back_populates="student")
-
+    group = relationship("Group", back_populates="students")
 
 class Teacher(Base):
-    __tablename__ = "techers"
+    __tablename__ = "teachers"
     id = Column(Integer, primary_key=True)
     name = Column(String(50))
     subjects = relationship("Subject", back_populates="teacher")
-
 
 class Subject(Base):
     __tablename__ = "subjects"
@@ -34,16 +31,15 @@ class Subject(Base):
     teacher_id = Column(Integer, ForeignKey("teachers.id"))
     teacher = relationship("Teacher", back_populates="subjects")
 
-
 class Point(Base):
     __tablename__ = "points"
     id = Column(Integer, primary_key=True)
-    student_id = Column(Integer, ForeignKey("student.id"))
-    teacher_id = Column(Integer, ForeignKey("teachers.id"))
+    student_id = Column(Integer, ForeignKey("students.id"))
+    subject_id = Column(Integer, ForeignKey("subjects.id"))
     point = Column(Integer)
     created_at = Column(DateTime)
-    student = relationship("Student", back_populates="students")
-    teacher = relationship("Teacher", back_populates="teachers")
+    student = relationship("Student", back_populates="points")
+    subject = relationship("Subject", back_populates="points")
 
 
 
