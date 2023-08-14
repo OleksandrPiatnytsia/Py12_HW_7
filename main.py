@@ -52,7 +52,20 @@ def get_subjects_by_teacher():
 
 
 # Знайти список студентів у певній групі.
+def get_students_by_group():
+    students_by_group = session.query(Student.name, Group.name).join(Group).filter(Group.id == 20).all()
+    for s in students_by_group:
+        print(f"{s[1]}: {s[0]}")
+
+
 # Знайти оцінки студентів в окремій групі з певного предмета.
+def get_students_points():
+    students_points = session.query(Point.point, Student.name, Subject.name).join(Student).filter(Student.group_id == 19).join(Subject).filter(Subject.id == 29).all()
+    for s in students_points:
+        print(f"{s[2]}/ {s[1]} /{s[0]}")
+
+
+
 # Знайти середній бал, який ставить певний викладач зі своїх предметів.
 # Знайти список курсів, які відвідує певний студент.
 # Список курсів, які певному студенту читає певний викладач.
@@ -121,4 +134,6 @@ if __name__ == '__main__':
     # get_students_highest_by_subject()
     # get_grops_highest_by_subject() !!!!!!!!!!!!!!!!
     # get_average_points()
-    get_subjects_by_teacher()
+    # get_subjects_by_teacher()
+    # get_students_by_group()
+    get_students_points()
