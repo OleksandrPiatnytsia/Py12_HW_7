@@ -1,7 +1,5 @@
-from datetime import datetime
 
 from sqlalchemy import and_, func, desc
-from sqlalchemy.orm import joinedload
 
 from db import session
 from models import Student, Teacher, Point, Subject, Group
@@ -24,17 +22,23 @@ def get_students_highest_by_subject():
         Subject).filter(Subject.id == 29).group_by(Student).order_by(desc("avg_point")).first()
     print(student_average_points[0].name, student_average_points[1])
 
-
-# !!!!!!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 # Знайти середній бал у групах з певного предмета.
 def get_grops_highest_by_subject():
     # average_points_by_group = session.query(Point.student.group, func.avg(Point.point).label("avg_point")).join(Group).join(Subject).filter(Subject.id == 29).group_by(Point.student.group).order_by(desc("avg_point")).all()
-    average_points_by_group = session.query(Group.name, func.avg(Point.point).label("avg_point")).join(Student).join(
-        Point).join(Subject).filter(Subject.id == 29).group_by(Group.name).all()
+
+    # average_points_by_group = session.query(func.avg(Point.point).label("avg_point"), Group.name).filter(
+    #     Point.subject_id == 29).join(Student).join(Group).group_by(
+    #     Group.name).all()
+    # print(average_points_by_group)
+
+    average_points_by_group = session.query(Point.point, Student.name, Subject.name).filter(
+        Point.subject_id == 29).join(Student).join(Subject).all()
     print(average_points_by_group)
 
-    for s in average_points_by_group:
-        print(f"{s[0].name} {s[1]}")
+
+    # for s in average_points_by_group:
+    #     print(f"{s[0].name} {s[1]}")
 
 
 # Знайти середній бал на потоці (по всій таблиці оцінок).
@@ -50,7 +54,6 @@ def get_subjects_by_teacher():
         print(f"{s[1]} {s[0]}")
 
 
-
 # Знайти список студентів у певній групі.
 def get_students_by_group():
     students_by_group = session.query(Student.name, Group.name).join(Group).filter(Group.id == 20).all()
@@ -60,80 +63,50 @@ def get_students_by_group():
 
 # Знайти оцінки студентів в окремій групі з певного предмета.
 def get_students_points():
-    students_points = session.query(Point.point, Student.name, Subject.name).join(Student).filter(Student.group_id == 19).join(Subject).filter(Subject.id == 29).all()
+    students_points = session.query(Point.point, Student.name, Subject.name).join(Student).filter(
+        Student.group_id == 19).join(Subject).filter(Subject.id == 29).all()
     for s in students_points:
         print(f"{s[2]}/ {s[1]} /{s[0]}")
 
 
-
 # Знайти середній бал, який ставить певний викладач зі своїх предметів.
+def get_average_teacher_point():
+    # # середній по конкретному
+    # average_teacher_point = session.query(func.avg(Point.point).label("avg_point"), Subject.name).join(Subject).filter(
+    #     Subject.teacher_id == 32).group_by(Subject.name).all()
+
+    # середній по всим
+    average_teacher_point = session.query(func.avg(Point.point).label("avg_point"), ).join(Subject).filter(
+        Subject.teacher_id == 32).first()
+
+    print(average_teacher_point[0])
+
+
 # Знайти список курсів, які відвідує певний студент.
+def get_subjects_by_student():
+    subjects_by_student = session.query(Subject).join(Point).join(Student).filter(Student.id == 151).distinct().all()
+
+    for subj in subjects_by_student:
+        print(subj.name)
+
+
 # Список курсів, які певному студенту читає певний викладач.
+def get_subjects_by_student_teacher():
+    subjects = session.query(Subject).filter(Subject.teacher_id == 32).join(Point).join(Student).filter(
+        Student.id == 152).distinct().all()
 
-
-#
-# def get_students():
-#     students = session.query(Student).options(joinedload(Student.teachers)).limit(5).offset(5).all()
-#     for s in students:
-#         columns = ["id", "fullname", "teachers"]
-#         rd = [dict(zip(columns, (s.id, s.fullname, [(t.id, t.fullname) for t in s.teachers])))]
-#         print(rd)
-#
-#
-# def get_teachers():
-#     teachers = session.query(Teacher).options(joinedload(Teacher.students, innerjoin=True)).order_by(Teacher.id).all()
-#     for t in teachers:
-#         columns = ["id", "fullname", "students"]
-#         rd = [dict(zip(columns, (t.id, t.fullname, [(s.id, s.fullname) for s in t.students])))]
-#         print(rd)
-#
-#
-# def get_teachers_join():
-#     teachers = session.query(Teacher).outerjoin(Teacher.students).order_by(Teacher.id).all()
-#     for t in teachers:
-#         columns = ["id", "fullname", "students"]
-#         rd = [dict(zip(columns, (t.id, t.fullname, [(s.id, s.fullname) for s in t.students])))]
-#         print(rd)
-#
-#
-# def get_teachers_filter():
-#     teachers = session.query(Teacher).options(joinedload(Teacher.students, innerjoin=True)) \
-#         .filter(and_(Teacher.start_work > datetime(year=2022, month=2, day=24),
-#                      Teacher.start_work < datetime(year=2023, month=6, day=22)
-#                      )).order_by(Teacher.id).all()
-#
-#     for t in teachers:
-#         columns = ["id", "fullname", "students"]
-#         rd = [dict(zip(columns, (t.id, t.fullname, [(s.id, s.fullname) for s in t.students])))]
-#         print(rd)
-#
-#
-# def get_students_join_next():
-#     students = session.query(Student).join(Student.teachers).join(Student.contacts).all()
-#     for s in students:
-#         columns = ["id", "fullname", "teachers", "contacts"]
-#         rd = [dict(zip(columns, (
-#             s.id, s.fullname, [(t.id, t.fullname) for t in s.teachers], [(c.id, c.fullname) for c in s.contacts])))]
-#         print(rd)
-#
-#
-# def custom_get_students_join_next():
-#     students = session.query(Student.id, Student.fullname, Teacher.fullname.label("teacher_fullname"),
-#                              Contact.fullname.label("contact_fullname"))\
-#         .select_from(Student).join(TeacherStudent).join(Teacher).join(Contact).all()
-#
-#     for s in students:
-#         columns = ["id", "fullname", "teachers", "contacts"]
-#         rd = [dict(zip(columns, (
-#             s.id, s.fullname, s.teacher_fullname, s.contact_fullname)))]
-#         print(rd)
+    for subj in subjects:
+        print(subj.name)
 
 
 if __name__ == '__main__':
     # get_students_highest_scores()
     # get_students_highest_by_subject()
-    # get_grops_highest_by_subject() !!!!!!!!!!!!!!!!
+    get_grops_highest_by_subject()
     # get_average_points()
     # get_subjects_by_teacher()
     # get_students_by_group()
-    get_students_points()
+    # get_students_points()
+    # get_average_teacher_point()
+    # get_subjects_by_student()
+    # get_subjects_by_student_teacher()
