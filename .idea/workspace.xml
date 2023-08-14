@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e7661577-2df1-45ce-a5ae-3d5ebd4956d9" name="Changes" comment="seed added">
+    <list default="true" id="e7661577-2df1-45ce-a5ae-3d5ebd4956d9" name="Changes" comment="1, 2 query done">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/models.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -151,7 +152,14 @@
       <option name="project" value="LOCAL" />
       <updated>1692007167119</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="1, 2 query done">
+      <created>1692010109950</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1692010109950</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -176,7 +184,8 @@
     <MESSAGE value="uri set added; relations models fixed" />
     <MESSAGE value="seed. sync" />
     <MESSAGE value="seed added" />
-    <option name="LAST_COMMIT_MESSAGE" value="seed added" />
+    <MESSAGE value="1, 2 query done" />
+    <option name="LAST_COMMIT_MESSAGE" value="1, 2 query done" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>

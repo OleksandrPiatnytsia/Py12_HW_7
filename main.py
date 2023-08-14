@@ -6,28 +6,51 @@ from sqlalchemy.orm import joinedload
 from db import session
 from models import Student, Teacher, Point, Subject, Group
 
+
 # Знайти 5 студентів із найбільшим середнім балом з усіх предметів
 def get_students_highest_scores():
-    student_average_points = session.query(Student, func.avg(Point.point).label("av_points")).join(Point).group_by(Student).order_by(desc("av_points")).limit(5).all()
+    student_average_points = session.query(Student, func.avg(Point.point).label("av_points")).join(Point).group_by(
+        Student).order_by(desc("av_points")).limit(5).all()
     # print(student_average_points)
 
     for s in student_average_points:
         print(f"{s[0].name} {s[1]}")
 
+
 # Знайти студента із найвищим середнім балом з певного предмета.
 def get_students_highest_by_subject():
     # student_average_points = session.query(Point.student, func.avg(Point.point).label("av_points")).join(Point).join(Subject).filter(Subject.id ==29).group_by(Student).order_by(desc("av_points")).limit(1).all()
-    student_average_points = session.query(Student, func.avg(Point.point).label("avg_point")).join(Point).join(Subject).filter(Subject.id == 29).group_by(Student).order_by(desc("avg_point")).first()
+    student_average_points = session.query(Student, func.avg(Point.point).label("avg_point")).join(Point).join(
+        Subject).filter(Subject.id == 29).group_by(Student).order_by(desc("avg_point")).first()
     print(student_average_points[0].name, student_average_points[1])
 
+
+# !!!!!!
 # Знайти середній бал у групах з певного предмета.
-def get_students_highest_by_subject():
-    # student_average_points = session.query(G.student, func.avg(Point.point).label("av_points")).join(Point).join(Subject).filter(Subject.id ==29).group_by(Student).order_by(desc("av_points")).limit(1).all()
-    student_average_points = session.query(Group, func.avg(Point.point).label("avg_point")).join(Point).join(Subject).filter(Subject.id == 29).group_by(Student).order_by(desc("avg_point")).first()
-    print(student_average_points[0].name, student_average_points[1])
+def get_grops_highest_by_subject():
+    # average_points_by_group = session.query(Point.student.group, func.avg(Point.point).label("avg_point")).join(Group).join(Subject).filter(Subject.id == 29).group_by(Point.student.group).order_by(desc("avg_point")).all()
+    average_points_by_group = session.query(Group.name, func.avg(Point.point).label("avg_point")).join(Student).join(
+        Point).join(Subject).filter(Subject.id == 29).group_by(Group.name).all()
+    print(average_points_by_group)
+
+    for s in average_points_by_group:
+        print(f"{s[0].name} {s[1]}")
+
 
 # Знайти середній бал на потоці (по всій таблиці оцінок).
+def get_average_points():
+    average_points = session.query(func.avg(Point.point).label("avg_point")).first()
+    print(average_points[0])
+
+
 # Знайти, які курси читає певний викладач.
+def get_subjects_by_teacher():
+    subjects_by_teacher = session.query(Subject.name, Teacher.name).join(Teacher).filter(Teacher.id == 32).all()
+    for s in subjects_by_teacher:
+        print(f"{s[1]} {s[0]}")
+
+
+
 # Знайти список студентів у певній групі.
 # Знайти оцінки студентів в окремій групі з певного предмета.
 # Знайти середній бал, який ставить певний викладач зі своїх предметів.
@@ -94,6 +117,8 @@ def get_students_highest_by_subject():
 
 
 if __name__ == '__main__':
-
     # get_students_highest_scores()
-    get_students_highest_by_subject()
+    # get_students_highest_by_subject()
+    # get_grops_highest_by_subject() !!!!!!!!!!!!!!!!
+    # get_average_points()
+    get_subjects_by_teacher()
