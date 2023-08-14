@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="e7661577-2df1-45ce-a5ae-3d5ebd4956d9" name="Changes" comment="6, 7 query done">
+    <list default="true" id="e7661577-2df1-45ce-a5ae-3d5ebd4956d9" name="Changes" comment="query done without 3d query">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
@@ -172,7 +172,14 @@
       <option name="project" value="LOCAL" />
       <updated>1692012565264</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="query done without 3d query">
+      <created>1692018184057</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1692018184057</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="UnknownFeatures">
@@ -200,7 +207,8 @@
     <MESSAGE value="1, 2 query done" />
     <MESSAGE value="4, 5 query done" />
     <MESSAGE value="6, 7 query done" />
-    <option name="LAST_COMMIT_MESSAGE" value="6, 7 query done" />
+    <MESSAGE value="query done without 3d query" />
+    <option name="LAST_COMMIT_MESSAGE" value="query done without 3d query" />
   </component>
   <component name="XDebuggerManager">
     <watches-manager>

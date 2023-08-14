@@ -1,4 +1,3 @@
-
 from sqlalchemy import and_, func, desc
 
 from db import session
@@ -9,7 +8,6 @@ from models import Student, Teacher, Point, Subject, Group
 def get_students_highest_scores():
     student_average_points = session.query(Student, func.avg(Point.point).label("av_points")).join(Point).group_by(
         Student).order_by(desc("av_points")).limit(5).all()
-    # print(student_average_points)
 
     for s in student_average_points:
         print(f"{s[0].name} {s[1]}")
@@ -17,28 +15,18 @@ def get_students_highest_scores():
 
 # Знайти студента із найвищим середнім балом з певного предмета.
 def get_students_highest_by_subject():
-    # student_average_points = session.query(Point.student, func.avg(Point.point).label("av_points")).join(Point).join(Subject).filter(Subject.id ==29).group_by(Student).order_by(desc("av_points")).limit(1).all()
     student_average_points = session.query(Student, func.avg(Point.point).label("avg_point")).join(Point).join(
         Subject).filter(Subject.id == 29).group_by(Student).order_by(desc("avg_point")).first()
     print(student_average_points[0].name, student_average_points[1])
 
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# Знайти середній бал у групах з певного предмета.
+
 def get_grops_highest_by_subject():
-    # average_points_by_group = session.query(Point.student.group, func.avg(Point.point).label("avg_point")).join(Group).join(Subject).filter(Subject.id == 29).group_by(Point.student.group).order_by(desc("avg_point")).all()
 
-    # average_points_by_group = session.query(func.avg(Point.point).label("avg_point"), Group.name).filter(
-    #     Point.subject_id == 29).join(Student).join(Group).group_by(
-    #     Group.name).all()
-    # print(average_points_by_group)
+    average_points_by_group = session.query(func.avg(Point.point), Group.name).filter(
+        Point.subject_id == 29).join(Subject).join(Student).join(Group).group_by(Group.name).order_by(Group.name).all()
 
-    average_points_by_group = session.query(Point.point, Student.name, Subject.name).filter(
-        Point.subject_id == 29).join(Student).join(Subject).all()
-    print(average_points_by_group)
-
-
-    # for s in average_points_by_group:
-    #     print(f"{s[0].name} {s[1]}")
+    for s in average_points_by_group:
+        print(f"{s[1]}: {s[0]}")
 
 
 # Знайти середній бал на потоці (по всій таблиці оцінок).
