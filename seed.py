@@ -1,69 +1,104 @@
+from random import randint, choice
+
+from datetime import datetime, timedelta
+
+from faker import Faker
+from sqlalchemy.exc import SQLAlchemyError
+
+from db import session
+from models import Teacher, Student, Group, Point, Subject
+
+MIN_POINTS_COUNT = 7
+MAX_POINTS_COUNT = 20
+
+TEACHERS_COUNT = 5
+
+STUDENTS_COUNT = 50
+
+SUBJECTS = [
+    "Математичний аналіз",
+    "Історія",
+    "Алхімія",
+    "Загальна алгебра",
+    "Квантова механіка",
+    "Чисельні методи",
+    "Теорія імовірності"
+]
+
+GROUPS = ["group 1", "group 2", "group 3"]
+
+fake = Faker('uk-UA')
+
+
+def generate_random_workday():
+    random_day = datetime(datetime.now().year, 1, 1) + timedelta(
+        days=randint(1, datetime.now().timetuple().tm_yday)
+    )
+
+    # Перевірка, чи день не вихідний
+    while random_day.weekday() >= 5:
+        random_day += timedelta(days=1)
+
+    random_time = timedelta(hours=randint(8, 17), minutes=randint(0, 59))
+    random_datetime = random_day + random_time
+
+    # Перетворення на формат TIMESTAMP
+    formatted_datetime = random_datetime.strftime("%Y-%m-%d %H:%M:%S")
+
+    return formatted_datetime
+
+
 def insert_data_to_DB():
+    # insert data
+    # TEACHERS
+    if not session.query(Teacher).first():
+        for i in range(1, TEACHERS_COUNT + 1):
+            teacher = Teacher(name=fake.name())
+            session.add(teacher)
+
+    # GROUPS
+    if not session.query(Group).first():
+        for group_name in GROUPS:
+            group = Group(name=group_name)
+            session.add(group)
+
+    # SUBJECTS
+    if not session.query(Subject).first():
+        for subject_name in SUBJECTS:
+            tchr_list = session.query(Teacher).all()
+
+            subject = Subject(name=subject_name, teacher_id=choice(tchr_list).id)
+            session.add(subject)
+
+
+    # STUDENTS
+    if not session.query(Student).first():
+        for _ in range(STUDENTS_COUNT):
+            group_list = session.query(Group).all()
+
+            student = Student(name=fake.name(), group_id=choice(group_list).id)
+            session.add(student)
+
+
+    # POINTS
+    if not session.query(Point).first():
+        students_list = session.query(Student).all()
+
+        subj_list = session.query(Subject).all()
+
+        for student in students_list:
+            for _ in range(1, randint(MIN_POINTS_COUNT, MAX_POINTS_COUNT)):
+                point = Point(student_id=student.id, subject_id=choice(subj_list).id, point=randint(1, 100),
+                              created_at=generate_random_workday())
+                session.add(point)
+
+
+if __name__ == '__main__':
     try:
-        with create_connection() as conn:
-            if conn is not None:
-                # insert data
-                # TEACHERS
-                tchr_data = get_query_result(conn, "SELECT id FROM teachers LIMIT 1")
-                if not tchr_data:
-                    for i in range(1, TEACHERS_COUNT + 1):
-                        sql_expression = """INSERT INTO teachers(name) VALUES(%s);"""
-                        insert_data(conn, sql_expression, (fake.name(),))
-
-                # GROUPS
-                grp_data = get_query_result(conn, "SELECT id FROM groups LIMIT 1")
-                if not grp_data:
-                    for group in GROUPS:
-                        sql_expression = """INSERT INTO groups(name) VALUES(%s);"""
-                        insert_data(conn, sql_expression, (group,))
-
-                # SUBJECTS
-                subj_data = get_query_result(conn, "SELECT id FROM subjects LIMIT 1")
-                if not subj_data:
-                    for subject in SUBJECTS:
-                        tchr_tuple = get_query_result(conn, "SELECT id FROM teachers")
-
-                        sql_expression = (
-                            """INSERT INTO subjects(name,teacher_id) VALUES(%s,%s);"""
-                        )
-                        insert_data(conn, sql_expression, (subject, choice(tchr_tuple)))
-
-                # STUDENTS
-                std_data = get_query_result(conn, "SELECT id FROM students LIMIT 1")
-                if not std_data:
-                    for i in range(STUDENTS_COUNT):
-                        groupe_tuple = get_query_result(conn, "SELECT id FROM groups")
-
-                        sql_expression = (
-                            """INSERT INTO students(name,group_id) VALUES(%s,%s);"""
-                        )
-                        insert_data(
-                            conn, sql_expression, (fake.name(), choice(groupe_tuple))
-                        )
-
-                # POINTS
-                std_data = get_query_result(conn, "SELECT id FROM points LIMIT 1")
-                if not std_data:
-                    students_id_tuple = get_query_result(
-                        conn, "SELECT id FROM students"
-                    )
-                    subj_id_tuple = get_query_result(conn, "SELECT id FROM subjects")
-
-                    for student_id in students_id_tuple:
-                        for _ in range(1, randint(MIN_POINTS_COUNT, MAX_POINTS_COUNT)):
-                            sql_expression = """INSERT INTO points(student_id,subject_id, point, exam_date) VALUES(%s,%s,%s,%s);"""
-                            insert_data(
-                                conn,
-                                sql_expression,
-                                (
-                                    student_id,
-                                    choice(subj_id_tuple),
-                                    randint(1, 100),
-                                    generate_random_workday(),
-                                ),
-                            )
-
-            else:
-                print("Error! cannot create the database connection.")
-    except RuntimeError as e:
-        logging.error(e)
+        insert_data_to_DB()
+        session.commit()
+    except SQLAlchemyError as e:
+        print(e)
+        session.rollback()
+    finally:
+        session.close()

@@ -17,6 +17,7 @@ class Student(Base):
     name = Column(String(50))
     group_id = Column(Integer, ForeignKey("groups.id"))
     group = relationship("Group", back_populates="students")
+    points = relationship("Point", back_populates="student")
 
 class Teacher(Base):
     __tablename__ = "teachers"
@@ -30,6 +31,7 @@ class Subject(Base):
     name = Column(String(50))
     teacher_id = Column(Integer, ForeignKey("teachers.id"))
     teacher = relationship("Teacher", back_populates="subjects")
+    points = relationship("Point", back_populates="subject")
 
 class Point(Base):
     __tablename__ = "points"
